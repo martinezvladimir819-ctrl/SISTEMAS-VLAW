@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @keyframes pulseBG {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    min-height: 100vh;
+    background: radial-gradient(circle at top left, rgba(46, 204, 113, 0.18), transparent 22%), radial-gradient(circle at bottom right, rgba(46, 204, 113, 0.1), transparent 20%), linear-gradient(135deg, #08100f 0%, #0d242d 45%, #091012 100%);
+    color: #e0e0e0;
+    overflow-x: hidden;
+    animation: pulseBG 16s ease-in-out infinite;
+  }
+
+  .topbar { position: relative; }
+
+  header {
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(46, 204, 113, 0.35);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 80;
+  }
+
+  .brand { display: flex; align-items: center; gap: 0.9rem; }
+
+  header h1 { color: #2ecc71; font-size: 1.3rem; }
+
+  .btn {
+    background: #2ecc71;
+    color: #000;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+    box-shadow: 0 10px 25px rgba(46, 204, 113, 0.18);
+    transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn:hover {
+    background: #27ae60;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(46, 204, 113, 0.25);
+  }
+
+  .btn-outline {
+    background: none;
+    border: 1px solid #2ecc71;
+    color: #2ecc71;
+  }
+  .btn-outline:hover { background: rgba(46, 204, 113, 0.12); }
+
+  /* Botón de menú (hamburguesa) */
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 34px;
+    height: 34px;
+    background: none;
+    border: 1px solid #2ecc71;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .menu-toggle .bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    margin: 0 auto;
+    background: #2ecc71;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+  .menu-toggle[aria-expanded="true"] .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-toggle[aria-expanded="true"] .bar:nth-child(2) { opacity: 0; }
+  .menu-toggle[aria-expanded="true"] .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Menú desplegable de navegación */
+  nav.tabs {
+    position: absolute;
+    top: 100%;
+    left: 2rem;
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    background: rgba(17, 17, 17, 0.96);
+    border: 1px solid rgba(46, 204, 113, 0.45);
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+    transition: max-height 0.28s ease, opacity 0.24s ease, transform 0.2s ease;
+    transform: translateY(-10px);
+    z-index: 60;
+  }
+
+  nav.tabs.open {
+    transform: translateY(0);
+  }
+
+  nav.tabs.open {
+    max-height: 620px;
+    opacity: 1;
+    padding: 0.4rem 0;
+  }
+
+  nav.tabs button {
+    background: none;
+    border: none;
+    color: #ccc;
+    text-align: left;
+    padding: 0.9rem 1.1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    border-left: 3px solid transparent;
+    transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+
+  nav.tabs button.active {
+    color: #2ecc71;
+    border-left: 3px solid #2ecc71;
+    font-weight: bold;
+    background: rgba(46, 204, 113, 0.08);
+    transform: translateX(2px);
+  }
+
+  nav.tabs button:hover { color: #2ecc71; background: rgba(46, 204, 113, 0.06); }
+
+  main {
+    max-width: 980px;
+    margin: 2rem auto;
+    padding: 1.8rem;
+    background: rgba(20, 28, 34, 0.96);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.22);
+    min-height: 55vh;
+    overflow: hidden;
+  }
+
+  .tab-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+    will-change: opacity, transform;
+  }
+  .tab-content.fade-enter {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  .tab-content.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .tab-content.active.fade-enter {
+    animation: fadeInUp 0.42s ease both;
+  }
+
+  .tab-content h2 { color: #2ecc71; margin-bottom: 1rem; }
+  .tab-content p { line-height: 1.6; margin-bottom: 0.8rem; }
+
+  /* ---- Inicio visual (hero, stats, features) ---- */
+  .hero { text-align: center; padding: 1.5rem 0.8rem 2rem; animation: fadeInUp 0.8s ease both; }
+
+  .eyebrow {
+    display: inline-block;
+    color: #2ecc71;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    font-weight: bold;
+    margin-bottom: 0.9rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.08;
+    color: #ffffff;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    letter-spacing: -0.03em;
+    text-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .hero-sub {
+    max-width: 620px;
+    margin: 0 auto 1.8rem;
+    color: #c8cfd6;
+    line-height: 1.75;
+    font-size: 1rem;
+  }
+
+  .hero-actions {
+    display: inline-flex;
+    gap: 0.9rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.4rem;
+  }
+
+  .hero-actions .btn {
+    min-width: 160px;
+  }
+
+  .wave-divider { line-height: 0; margin: 1.6rem -1.5rem 0; }
+  .wave-divider svg { width: 100%; height: 36px; display: block; }
+  .wave-divider path { fill: rgba(46, 204, 113, 0.1); }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    text-align: center;
+    margin: 2rem 0 2.4rem;
+  }
+
+  .stat-num { display: block; font-size: 1.7rem; font-weight: 800; color: #2ecc71; }
+  .stat-label { display: block; font-size: 0.75rem; color: #999; margin-top: 0.25rem; }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.1rem;
+  }
+
+  .feature {
+    background: rgba(18, 28, 34, 0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 1.6rem 1.3rem;
+    text-align: center;
+    transition: border-color 0.24s ease, transform 0.24s ease, box-shadow 0.24s ease, background 0.24s ease;
+    will-change: transform, box-shadow, background;
+  }
+  .feature:hover {
+    background: rgba(34, 50, 62, 0.96);
+    border-color: #2ecc71;
+    transform: translateY(-6px);
+    box-shadow: 0 24px 45px rgba(46, 204, 113, 0.16);
+  }
+
+  .feature-icon {
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 0.8rem;
+    color: #2ecc71;
+  }
+
+  .feature h3 { color: #fff; font-size: 1rem; margin-bottom: 0.4rem; }
+  .feature p { font-size: 0.85rem; color: #aaa; line-height: 1.55; margin-bottom: 0; }
+
+  footer {
+    text-align: center;
+    padding: 1rem;
+    background: #000;
+    color: #777;
+    border-top: 2px solid #2ecc71;
+  }
+
+  /* Modal de usuarios */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.72);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    opacity: 0;
+    transform: translateY(-18px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+  .modal-overlay.active .modal {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .modal {
+    background: #1a1a1a;
+    border: 1px solid #2ecc71;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 350px;
+  }
+
+  .modal h2 { color: #2ecc71; margin-bottom: 1rem; }
+
+  .modal input {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 0.8rem;
+    background: #0d0d0d;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 4px;
+  }
+
+  .profile-form {
+    margin-top: 1rem;
+  }
+
+  .profile-form h3 {
+    color: #fff;
+    margin-bottom: 0.8rem;
+  }
+
+  .profile-form input {
+    width: 100%;
+    padding: 0.6rem;
+    margin-bottom: 0.8rem;
+    background: #0d0d0d;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 4px;
+  }
+
+  .profile-form button {
+    width: 100%;
+    margin-top: 0.4rem;
+  }
+
+  .profile-form #profileMsg {
+    margin-top: 0.6rem;
+  }
+
+  .modal .switch-link {
+    color: #2ecc71;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-decoration: underline;
+  }
+
+  .modal .close-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    float: right;
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+
+  .msg { font-size: 0.85rem; margin-top: 0.5rem; }
+  .msg.error { color: #e74c3c; }
+  .msg.success { color: #2ecc71; }
+
+  #userPanel { display: none; align-items: center; gap: 0.8rem; }
+
+  /* Tarjetas dinámicas genéricas (usadas en todas las pestañas) */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .info-card {
+    background: rgba(16, 24, 32, 0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 1.1rem;
+    transition: border-color 0.24s ease, transform 0.24s ease, box-shadow 0.24s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .info-card:hover {
+    border-color: #2ecc71;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(46, 204, 113, 0.09);
+  }
+
+  .info-card h3 {
+    color: #2ecc71;
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .info-card p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #ccc;
+    margin-bottom: 0.8rem;
+  }
+
+  .info-card .info-btn {
+    background: none;
+    border: 1px solid #2ecc71;
+    color: #2ecc71;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  .info-card .info-btn:hover {
+    background: #2ecc71;
+    color: #000;
+  }
+
+  /* Recuadro dinámico de "más información" */
+  .info-box {
+    display: none;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px dashed #333;
+  }
+
+  .info-box.active { display: block; }
+
+  .info-box .detalle-text {
+    font-size: 0.87rem;
+    line-height: 1.55;
+    color: #ccc;
+    margin-bottom: 0.4rem;
+  }
+
+  .info-box .info-img {
+    display: block;
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 0.7rem;
+    background: #0d0d0d;
+  }
+
+  .info-box .img-credit {
+    font-size: 0.7rem;
+    color: #666;
+    margin-bottom: 0;
+  }
+
+  /* Variante acordeón para Preguntas Frecuentes */
+  .faq-grid { grid-template-columns: 1fr; }
+  .faq-grid .info-card { padding: 0.9rem 1.1rem; }
+  .faq-grid .info-card h3 { font-size: 0.95rem; margin-bottom: 0; }
+  .faq-grid .info-btn { width: auto; margin-top: 0.6rem; }
+</style>
+</head>
+<body>
+
+<div class="topbar" id="topBar">
+  <header>
+    <div class="brand">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú de navegación" aria-expanded="false">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+      <h1>VLAW, sistemas verdes</h1>
+    </div>
+    <div id="authArea">
+      <button class="btn" id="loginBtn">Iniciar sesión</button>
+      <div id="userPanel">
+        <span id="userName" style="color:#2ecc71;"></span>
+        <button class="btn" id="logoutBtn">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabsNav"></nav>
+</div>
+
+<main id="contenido"></main>
+
+<footer>
+  <p>&copy; 2026 VLAW, sistemas verdes.
+    Todos los derechos reservados.</p>
+</footer>
+
+<!-- Modal de Login/Registro -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="close-btn" id="closeModal">&times;</button>
+
+    <div id="loginForm">
+      <h2>Iniciar sesión</h2>
+      <input type="text" id="loginUser" placeholder="Usuario">
+      <input type="password" id="loginPass" placeholder="Contraseña">
+      <button class="btn" id="loginSubmit" style="width:100%;">Entrar</button>
+      <p class="msg" id="loginMsg"></p>
+      <p style="margin-top:1rem;">¿No tienes cuenta?
+        <span class="switch-link" id="showRegister">Regístrate</span>
+      </p>
+    </div>
+
+    <div id="registerForm" style="display:none;">
+      <h2>Crear cuenta</h2>
+      <input type="text" id="regName" placeholder="Nombre completo">
+      <input type="email" id="regEmail" placeholder="Correo electrónico">
+      <input type="tel" id="regPhone" placeholder="Teléfono">
+      <input type="text" id="regUser" placeholder="Usuario">
+      <input type="password" id="regPass" placeholder="Contraseña">
+      <button class="btn" id="registerSubmit" style="width:100%;">Registrarme</button>
+      <p class="msg" id="registerMsg"></p>
+      <p style="margin-top:1rem;">¿Ya tienes cuenta?
+        <span class="switch-link" id="showLogin">Inicia sesión</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- Contenido de las 10 pestañas ----------
+  const tabs = [
+    {
+      title: "Inicio",
+      content: `
+      <div class="hero">
+        <span class="eyebrow">Preparación para el futuro</span>
+        <h2 class="hero-title">Cada gota, exactamente donde debe estar</h2>
+        <p class="hero-sub">Diseñamos sistemas de riego inteligente para cultivos, jardines y espacios verdes urbanos que llevan el agua a la raíz —no al aire ni al suelo seco— reduciendo el consumo hasta un 40% sin sacrificar cosecha.</p>
+        <div class="hero-actions">
+          <button class="btn" id="heroCta">Ver servicios</button>
+          <button class="btn btn-outline" id="heroContact">Hablar con un especialista</button>
+        </div>
+      </div>
+
+      <div class="wave-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+          <path d="M0,30 C150,60 350,0 600,30 C850,60 1050,0 1200,30 L1200,60 L0,60 Z"></path>
+        </svg>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><span class="stat-num">40%</span><span class="stat-label">menos consumo de agua</span></div>
+        <div class="stat"><span class="stat-num">500+</span><span class="stat-label">proyectos completados</span></div>
+        <div class="stat"><span class="stat-num">10</span><span class="stat-label">años de experiencia</span></div>
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">ciudades con riego inteligente</span></div>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature">
+          <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 2c3.5 4.5 7 8.5 7 12.5A7 7 0 1 1 5 14.5C5 10.5 8.5 6.5 12 2Z"/>
+          </svg>
+          <h3>Riego de precisión</h3>
+          <p>Goteo, aspersión y microaspersión adaptados al cultivo, al terreno y al clima.</p>
+        </div>
+        <div class="feature">
+          <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/>
+            <circle cx="12" cy="19.5" r="1.2" fill="currentColor" stroke="none"/>
+          </svg>
+          <h3>Control remoto</h3>
+          <p>Controladores y sensores que se programan y monitorean desde el celular.</p>
+        </div>
+        <div class="feature">
+          <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="12" cy="12" r="4.5"/>
+            <path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8 6 18M18 6l1.8-1.8"/>
+          </svg>
+          <h3>Energía limpia</h3>
+          <p>Bombeo solar y sistemas pensados para reducir la huella hídrica y energética.</p>
+        </div>
+      </div>`
+    },
+    {
+      title: "Sobre Nosotros",
+      content: `<h2>Sobre Nosotros</h2>
+      <p>Fundada en 2015, VLAW, sistemas verdes nació con la misión de reducir el desperdicio de agua en la agricultura.</p>
+      <div class="card-grid" id="grid-sobre"></div>`
+    },
+    {
+      title: "Servicios",
+      content: `<h2>Nuestros Servicios</h2>
+      <p>Diseño e instalación de sistemas de riego, mantenimiento y consultoría en eficiencia hídrica.</p>
+      <div class="card-grid" id="serviciosGrid"></div>`
+    },
+    {
+      title: "Sistemas de Riego",
+      content: `<h2>Sistemas de Riego</h2>
+      <p>Cada cultivo y cada terreno necesita un método distinto. Estas son nuestras principales tecnologías.</p>
+      <div class="card-grid" id="grid-sistemas"></div>`
+    },
+    {
+      title: "Productos",
+      content: `<h2>Productos</h2>
+      <p>Equipamiento de alta durabilidad, pensado para funcionar en campo durante años.</p>
+      <div class="card-grid" id="grid-productos"></div>`
+    },
+    {
+      title: "Proyectos",
+      content: `<h2>Proyectos Destacados</h2>
+      <p>Algunos de los proyectos que reflejan nuestro trabajo en distintas escalas.</p>
+      <div class="card-grid" id="grid-proyectos"></div>`
+    },
+    {
+      title: "Clientes",
+      content: `<h2>Nuestros Clientes</h2>
+      <p>Más de 500 proyectos completados junto a distintos tipos de clientes en los últimos 10 años.</p>
+      <div class="card-grid" id="grid-clientes"></div>`
+    },
+    {
+      title: "Sostenibilidad",
+      content: `<h2>Sostenibilidad</h2>
+      <p>El agua es un recurso finito. Así es como la cuidamos en cada proyecto.</p>
+      <div class="card-grid" id="grid-sostenibilidad"></div>`
+    },
+    {
+      title: "Preguntas Frecuentes",
+      content: `<h2>Preguntas Frecuentes</h2>
+      <p>Toca una pregunta para ver la respuesta.</p>
+      <div class="card-grid faq-grid" id="grid-faq"></div>`
+    },
+    {
+      title: "Contacto",
+      content: `<h2>Contacto</h2>
+      <p>Escríbenos directamente o elige el área con la que quieres hablar.</p>
+      <div class="card-grid" id="grid-contacto"></div>
+      <p style="margin-top:1.2rem; color:#888; font-size:0.85rem;">Correo general: contacto@vlaw.com · Tel: +52 55 1234 5678 · Av. del Agua 123, Ciudad Verde.</p>`
+    },
+    {
+      title: "Mi Información",
+      secure: true,
+      content: `<h2>Mi Información</h2>
+      <p id="userInfoText">Accede con tu cuenta para ver tus datos.</p>
+      <div id="miInfoStats">
+        <p>Visitas a la página: <strong id="visitCount">0</strong></p>
+        <p>Lo que más ves:</p>
+        <ul id="mostViewedList"><li>No hay registros aún.</li></ul>
+      </div>
+      <div class="profile-form" id="profileFormContainer">
+        <h3>Mi perfil</h3>
+        <input type="text" id="profileName" placeholder="Nombre completo">
+        <input type="email" id="profileEmail" placeholder="Correo electrónico">
+        <input type="tel" id="profilePhone" placeholder="Teléfono">
+        <button class="btn" type="button" id="saveProfileBtn">Guardar información</button>
+        <p class="msg" id="profileMsg"></p>
+      </div>`
+    }
+  ];
+
+  const tabsNav = document.getElementById('tabsNav');
+  const contenido = document.getElementById('contenido');
+  const menuToggle = document.getElementById('menuToggle');
+
+  function cerrarMenu() {
+    tabsNav.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  menuToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const abierto = tabsNav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!tabsNav.contains(e.target) && !menuToggle.contains(e.target)) {
+      cerrarMenu();
+    }
+  });
+
+  tabs.forEach((tab, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = tab.title;
+    btn.className = i === 0 ? 'active' : '';
+    if (tab.secure) {
+      btn.style.display = 'none';
+      btn.dataset.secure = 'true';
+    }
+    btn.addEventListener('click', () => {
+      registrarVistaTab(i);
+      activarTab(i);
+      cerrarMenu();
+    });
+    tabsNav.appendChild(btn);
+
+    const div = document.createElement('div');
+    div.className = 'tab-content fade-enter' + (i === 0 ? ' active' : '');
+    div.innerHTML = tab.content;
+    contenido.appendChild(div);
+  });
+
+  actualizarTabsDeSesion(false);
+
+  document.getElementById('heroCta')?.addEventListener('click', () => activarTab(2));
+  document.getElementById('heroContact')?.addEventListener('click', () => activarTab(9));
+
+  function activarTab(index) {
+    document.querySelectorAll('nav.tabs button').forEach((b, i) => {
+      b.classList.toggle('active', i === index);
+    });
+    document.querySelectorAll('.tab-content').forEach((c, i) => {
+      const active = i === index;
+      c.classList.toggle('active', active);
+      if (active) {
+        c.classList.remove('fade-enter');
+        void c.offsetWidth;
+        c.classList.add('fade-enter');
+      }
+    });
+  }
+
+  function actualizarTabsDeSesion(loggedIn) {
+    document.querySelectorAll('nav.tabs button').forEach((btn, i) => {
+      const tab = tabs[i];
+      if (tab.secure) {
+        btn.style.display = loggedIn ? 'block' : 'none';
+        if (!loggedIn && btn.classList.contains('active')) {
+          activarTab(0);
+        }
+      }
+    });
+  }
+
+  function obtenerIndiceMiInfo() {
+    return tabs.findIndex(tab => tab.title === 'Mi Información');
+  }
+
+  // ---------- Motor genérico de tarjetas dinámicas ----------
+  // Cada pestaña (excepto Inicio) usa este mismo motor para pintar
+  // tarjetas con un recuadro expandible de "más información": texto
+  // ampliado + una foto de referencia del tema.
+  function crearTarjetas(gridId, items, opciones = {}) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+
+    const textoBoton = opciones.textoBoton || 'Más información';
+
+    grid.innerHTML = items.map(it => `
+      <div class="info-card" data-id="${it.id}">
+        <h3>${it.titulo}</h3>
+        ${it.resumen ? `<p>${it.resumen}</p>` : ''}
+        <button class="info-btn" data-target="info-${gridId}-${it.id}" data-default-text="${textoBoton}">${textoBoton}</button>
+        <div class="info-box" id="info-${gridId}-${it.id}">
+          ${it.imagen ? `<img class="info-img" src="${it.imagen.src}" alt="${it.imagen.alt}" loading="lazy">` : ''}
+          ${it.detalle ? `<p class="detalle-text">${it.detalle}</p>` : ''}
+          ${it.imagen ? `<p class="img-credit">Foto: ${it.imagen.credito}</p>` : ''}
+        </div>
+      </div>
+    `).join('');
+
+    // Botón "Más información" / "Ver respuesta": abre/cierra el recuadro de esa tarjeta
+    grid.querySelectorAll('.info-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const box = document.getElementById(btn.dataset.target);
+        const yaActivo = box.classList.contains('active');
+        grid.querySelectorAll('.info-box.active').forEach(b => b.classList.remove('active'));
+        grid.querySelectorAll('.info-btn').forEach(b => { b.textContent = b.dataset.defaultText; });
+        if (!yaActivo) {
+          box.classList.add('active');
+          btn.textContent = 'Ocultar';
+        }
+      });
+    });
+  }
+
+  // Imágenes libres (Wikimedia Commons) reutilizadas por tema
+  const img = (archivo, alt, credito) => ({
+    src: `https://commons.wikimedia.org/wiki/Special:FilePath/${archivo}?width=500`,
+    alt, credito
+  });
+
+  const fotoGoteo = img('Drip_irrigation_%282552390830%29.jpg', 'Riego por goteo en un cultivo', 'Wikimedia Commons (CC BY 2.0)');
+  const fotoGoteoMulch = img('Drip_irrigation_and_mulching.jpg', 'Riego por goteo con cobertura de mulch', 'Wikimedia Commons (CC BY-SA 4.0)');
+  const fotoVinedo = img('VineyardDrip.JPG', 'Riego por goteo en un viñedo', 'Wikimedia Commons');
+  const fotoFuga = img('Irrigation_drip_leaks.jpg', 'Mantenimiento de líneas de goteo', 'Wikimedia Commons (CC BY-SA 4.0)');
+  const fotoAspersor = img('Sprinkler03.jpg', 'Aspersor de riego en funcionamiento', 'Wikimedia Commons');
+  const fotoAspersor2 = img('Irrigational_sprinkler.jpg', 'Aspersor rociando un campo', 'Wikimedia Commons');
+  const fotoSensor = img('Soil_moisture_sensor.JPG', 'Sensor de humedad instalado en el suelo', 'Wikimedia Commons (CC BY-SA 4.0)');
+  const fotoSistema = img('Irrigation_system.JPG', 'Sistema de riego automatizado', 'Wikimedia Commons');
+  const fotoSolar = img('Solar_panels_on_the_edge_of_farm.jpg', 'Paneles solares junto a un campo de cultivo', 'Wikimedia Commons');
+
+  // ---------- Contenido de cada pestaña ----------
+  crearTarjetas('grid-sobre', [
+    { id: 'mision', titulo: 'Nuestra Misión', resumen: 'Reducir el desperdicio de agua en la agricultura con tecnología accesible.',
+      detalle: 'Diseñamos e instalamos sistemas que entregan exactamente el agua que cada cultivo necesita, ni una gota más, ayudando a productores a rendir más usando menos recursos.',
+      imagen: fotoVinedo },
+    { id: 'equipo', titulo: 'Nuestro Equipo', resumen: 'Ingenieros agrónomos e hidráulicos con experiencia real en campo.',
+      detalle: 'Combinamos conocimiento agronómico e hidráulico para diseñar soluciones que funcionan en la práctica, acompañando cada proyecto de principio a fin.',
+      imagen: fotoFuga },
+    { id: 'valores', titulo: 'Nuestros Valores', resumen: 'Sostenibilidad, precisión y cercanía con cada cliente.',
+      detalle: 'Recomendamos lo que el terreno realmente necesita, damos seguimiento después de la instalación y medimos resultados, no solo entregamos equipos.',
+      imagen: fotoSolar }
+  ]);
+
+  crearTarjetas('serviciosGrid', [
+    { id: 'goteo', titulo: 'Riego por Goteo', resumen: 'Aplicación precisa de agua directamente en la raíz de cada planta.',
+      detalle: 'Ideal para huertos y cultivos en hilera. Minimiza la evaporación y el crecimiento de maleza, siendo el sistema más eficiente para cultivos de alto valor.',
+      imagen: fotoGoteo },
+    { id: 'aspersion', titulo: 'Riego por Aspersión', resumen: 'Cobertura uniforme para jardines, céspedes y áreas verdes.',
+      detalle: 'Simula la lluvia natural cubriendo grandes superficies de forma pareja. Recomendado para pastos, forrajes y áreas verdes extensas.',
+      imagen: fotoAspersor },
+    { id: 'microaspersion', titulo: 'Microaspersión', resumen: 'Solución intermedia entre goteo y aspersión.',
+      detalle: 'Perfecta para viveros y cultivos sensibles que necesitan humedad constante sin encharcar el suelo.',
+      imagen: fotoGoteoMulch },
+    { id: 'mantenimiento', titulo: 'Mantenimiento Preventivo y Correctivo', resumen: 'Revisiones periódicas y reparación de sistemas.',
+      detalle: 'Programamos visitas de revisión para detectar fugas, obstrucciones o desgaste antes de que afecten tu cosecha o jardín.',
+      imagen: fotoFuga },
+    { id: 'consultoria', titulo: 'Consultoría en Eficiencia Hídrica', resumen: 'Análisis para reducir el consumo de agua sin afectar la producción.',
+      detalle: 'Evaluamos tu sistema actual y te entregamos un plan concreto para ahorrar agua y energía sin sacrificar rendimiento.',
+      imagen: fotoSensor },
+    { id: 'automatizacion', titulo: 'Automatización y Control Remoto', resumen: 'Programa y monitorea el riego desde cualquier lugar.',
+      detalle: 'Controladores inteligentes conectados a internet que te avisan si algo falla y permiten ajustar horarios desde el celular.',
+      imagen: fotoSistema }
+  ]);
+
+  crearTarjetas('grid-sistemas', [
+    { id: 'goteo2', titulo: 'Riego por Goteo', resumen: 'Ideal para huertos y cultivos en hilera.',
+      detalle: 'Entrega agua gota a gota directo a la raíz, reduciendo pérdidas por evaporación y viento.',
+      imagen: fotoGoteo },
+    { id: 'aspersion2', titulo: 'Riego por Aspersión', resumen: 'Cobertura uniforme para jardines y céspedes.',
+      detalle: 'Distribuye agua como lluvia artificial, cubriendo grandes extensiones de forma pareja.',
+      imagen: fotoAspersor2 },
+    { id: 'subterraneo', titulo: 'Riego Subterráneo', resumen: 'Máxima eficiencia con mínima evaporación.',
+      detalle: 'Las líneas se instalan bajo tierra, entregando agua directo a la zona radicular. Ideal para climas cálidos y secos.',
+      imagen: fotoGoteoMulch }
+  ]);
+
+  crearTarjetas('grid-productos', [
+    { id: 'controladores', titulo: 'Controladores Automáticos', resumen: 'Programa y monitorea el riego con conexión remota.',
+      detalle: 'Permiten crear horarios de riego, recibir alertas y ajustar el sistema desde el celular, incluso desde otra ciudad.',
+      imagen: fotoSistema },
+    { id: 'sensores', titulo: 'Sensores de Humedad', resumen: 'Miden en tiempo real la humedad del suelo.',
+      detalle: 'El sistema solo riega cuando el suelo realmente lo necesita, evitando el desperdicio de agua y energía.',
+      imagen: fotoSensor },
+    { id: 'tuberias', titulo: 'Tuberías y Goteros', resumen: 'Materiales de alta durabilidad para uso en campo.',
+      detalle: 'Resistentes a rayos UV, presión y obstrucciones, pensados para años de uso continuo con mínimo mantenimiento.',
+      imagen: fotoFuga }
+  ]);
+
+  crearTarjetas('grid-proyectos', [
+    { id: 'vinedos', titulo: 'Viñedos · 200 hectáreas', resumen: 'Modernización completa de un sistema de riego tradicional.',
+      detalle: 'Reemplazamos aspersión antigua por goteo tecnificado, reduciendo el consumo de agua en más de un tercio sin afectar la producción.',
+      imagen: fotoVinedo },
+    { id: 'parques', titulo: 'Parques Públicos', resumen: 'Riego inteligente en tres ciudades.',
+      detalle: 'Instalamos controladores automáticos y sensores de humedad en áreas verdes municipales, bajando costos de mantenimiento.',
+      imagen: fotoAspersor },
+    { id: 'coop-proy', titulo: 'Cooperativas Agrícolas', resumen: 'Sistemas compartidos para pequeños productores.',
+      detalle: 'Diseñamos infraestructura de riego colectiva que varias familias administran de forma conjunta, reduciendo el costo por hectárea.',
+      imagen: fotoGoteoMulch }
+  ]);
+
+  crearTarjetas('grid-clientes', [
+    { id: 'agricultores', titulo: 'Agricultores Independientes', resumen: 'Soluciones a la medida del tamaño de cada predio.',
+      detalle: 'Acompañamos desde el diagnóstico hasta la instalación, con planes de pago flexibles.',
+      imagen: fotoGoteo },
+    { id: 'cooperativas', titulo: 'Cooperativas Agrícolas', resumen: 'Proyectos colectivos con múltiples beneficiarios.',
+      detalle: 'Coordinamos instalaciones donde varias familias comparten infraestructura, optimizando costos.',
+      imagen: fotoGoteoMulch },
+    { id: 'municipios', titulo: 'Municipios', resumen: 'Riego eficiente para espacios públicos.',
+      detalle: 'Trabajamos con gobiernos locales para modernizar el riego de parques, camellones y áreas verdes urbanas.',
+      imagen: fotoAspersor }
+  ]);
+
+  crearTarjetas('grid-sostenibilidad', [
+    { id: 'ahorro', titulo: 'Ahorro de Agua', resumen: 'Hasta 40% menos consumo frente a métodos tradicionales.',
+      detalle: 'La combinación de riego de precisión y sensores de humedad evita el desperdicio, entregando solo el agua que la planta necesita.',
+      imagen: fotoGoteo },
+    { id: 'energia', titulo: 'Energía Solar', resumen: 'Bombeo de agua con energía limpia.',
+      detalle: 'Instalamos sistemas de bombeo solar que reducen la dependencia de combustibles fósiles y bajan los costos operativos.',
+      imagen: fotoSolar },
+    { id: 'impacto', titulo: 'Impacto Ambiental', resumen: 'Menos presión sobre fuentes de agua locales.',
+      detalle: 'Cada sistema que instalamos ayuda a preservar acuíferos y ríos, protegiendo el recurso para las próximas generaciones.',
+      imagen: fotoSistema }
+  ]);
+
+  crearTarjetas('grid-faq', [
+    { id: 'tiempo', titulo: '¿Cuánto tiempo toma una instalación?',
+      detalle: 'Entre 3 y 10 días según el tamaño y la complejidad del proyecto.' },
+    { id: 'garantia', titulo: '¿Ofrecen garantía?',
+      detalle: 'Sí, todos nuestros sistemas cuentan con 2 años de garantía sobre equipos e instalación.' },
+    { id: 'costo', titulo: '¿Cómo se calcula el costo?',
+      detalle: 'Depende del área, el tipo de sistema y el terreno. Hacemos una visita técnica gratuita para entregar una cotización precisa.' }
+  ], { textoBoton: 'Ver respuesta' });
+
+  crearTarjetas('grid-contacto', [
+    { id: 'ventas', titulo: 'Ventas', resumen: 'Cotizaciones y nuevos proyectos.',
+      detalle: 'Cuéntanos sobre tu terreno o jardín y te ayudamos a elegir el sistema adecuado. Correo: ventas@vlaw.com',
+      imagen: fotoVinedo },
+    { id: 'soporte', titulo: 'Soporte Técnico', resumen: 'Ayuda con sistemas ya instalados.',
+      detalle: 'Si tienes un sistema VLAW, sistemas verdes y necesitas mantenimiento o revisión, escríbenos. Correo: soporte@vlaw.com',
+      imagen: fotoFuga },
+    { id: 'oficinas', titulo: 'Oficinas', resumen: 'Armenia,Sonsonate,calle #13.',
+      detalle: 'Visítanos con cita previa para conocer nuestros equipos de demostración. Tel: +503 7195 9635',
+      imagen: fotoSistema }
+  ]);
+
+  // ---------- Sistema de usuarios (en memoria) ----------
+  let usuarios = cargarUsuarios(); // { user, pass, name, email, phone, visitCount, viewCounts }
+  let usuarioActual = null;
+
+  function cargarUsuarios() {
+    try {
+      const saved = localStorage.getItem('vlawUsuarios');
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function guardarUsuarios() {
+    localStorage.setItem('vlawUsuarios', JSON.stringify(usuarios));
+  }
+
+  function registrarVisitaPagina() {
+    if (!usuarioActual) return;
+    const perfil = usuarios.find(u => u.user === usuarioActual);
+    if (!perfil) return;
+    perfil.visitCount = (perfil.visitCount || 0) + 1;
+    guardarUsuarios();
+    actualizarMiInformacion();
+  }
+
+  function registrarVistaTab(index) {
+    if (!usuarioActual) return;
+    const tab = tabs[index];
+    if (!tab || tab.secure) return;
+    const perfil = usuarios.find(u => u.user === usuarioActual);
+    if (!perfil) return;
+    perfil.viewCounts = perfil.viewCounts || {};
+    const key = tab.title;
+    perfil.viewCounts[key] = (perfil.viewCounts[key] || 0) + 1;
+    guardarUsuarios();
+    actualizarMiInformacion();
+  }
+
+  function actualizarMiInformacion() {
+    const perfil = usuarioActual ? usuarios.find(u => u.user === usuarioActual) : null;
+    const infoTexto = document.getElementById('userInfoText');
+    const visitCount = document.getElementById('visitCount');
+    const mostViewedList = document.getElementById('mostViewedList');
+    const profileName = document.getElementById('profileName');
+    const profileEmail = document.getElementById('profileEmail');
+    const profilePhone = document.getElementById('profilePhone');
+    const profileMsg = document.getElementById('profileMsg');
+
+    if (!perfil) {
+      if (infoTexto) infoTexto.textContent = 'Accede con tu cuenta para ver tus datos.';
+      if (visitCount) visitCount.textContent = '0';
+      if (mostViewedList) mostViewedList.innerHTML = '<li>No hay registros aún.</li>';
+      if (profileName) profileName.value = '';
+      if (profileEmail) profileEmail.value = '';
+      if (profilePhone) profilePhone.value = '';
+      if (profileMsg) profileMsg.textContent = '';
+      return;
+    }
+
+    if (infoTexto) {
+      infoTexto.textContent = `Usuario: ${perfil.user}. Nombre: ${perfil.name || 'Sin nombre'}.`;
+    }
+    if (visitCount) {
+      visitCount.textContent = perfil.visitCount ? perfil.visitCount.toString() : '0';
+    }
+    if (profileName) profileName.value = perfil.name || '';
+    if (profileEmail) profileEmail.value = perfil.email || '';
+    if (profilePhone) profilePhone.value = perfil.phone || '';
+    if (profileMsg) profileMsg.textContent = '';
+
+    if (mostViewedList) {
+      const items = Object.entries(perfil.viewCounts || {}).sort((a, b) => b[1] - a[1]);
+      if (items.length === 0) {
+        mostViewedList.innerHTML = '<li>No hay registros aún.</li>';
+      } else {
+        mostViewedList.innerHTML = items.slice(0, 5).map(([name, count]) => `<li>${name}: ${count} veces</li>`).join('');
+      }
+    }
+  }
+
+  const modalOverlay = document.getElementById('modalOverlay');
+  const loginBtn = document.getElementById('loginBtn');
+  const closeModal = document.getElementById('closeModal');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const showRegister = document.getElementById('showRegister');
+  const showLogin = document.getElementById('showLogin');
+  const userPanel = document.getElementById('userPanel');
+  const userNameSpan = document.getElementById('userName');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  loginBtn.addEventListener('click', () => modalOverlay.classList.add('active'));
+  closeModal.addEventListener('click', () => modalOverlay.classList.remove('active'));
+
+  showRegister.addEventListener('click', () => {
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+  });
+
+  showLogin.addEventListener('click', () => {
+    registerForm.style.display = 'none';
+    loginForm.style.display = 'block';
+  });
+
+  document.getElementById('registerSubmit').addEventListener('click', () => {
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const user = document.getElementById('regUser').value.trim();
+    const pass = document.getElementById('regPass').value.trim();
+    const msg = document.getElementById('registerMsg');
+
+    if (!name || !email || !phone || !user || !pass) {
+      msg.textContent = 'Completa todos los campos.';
+      msg.className = 'msg error';
+      return;
+    }
+    if (usuarios.find(u => u.user === user)) {
+      msg.textContent = 'Ese usuario ya existe.';
+      msg.className = 'msg error';
+      return;
+    }
+    usuarios.push({ user, pass, name, email, phone, visitCount: 0, viewCounts: {} });
+    guardarUsuarios();
+    msg.textContent = 'Cuenta creada. Ahora inicia sesión.';
+    msg.className = 'msg success';
+    document.getElementById('regName').value = '';
+    document.getElementById('regEmail').value = '';
+    document.getElementById('regPhone').value = '';
+    document.getElementById('regUser').value = '';
+    document.getElementById('regPass').value = '';
+  });
+
+  document.getElementById('loginSubmit').addEventListener('click', () => {
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    const msg = document.getElementById('loginMsg');
+
+    const encontrado = usuarios.find(u => u.user === user && u.pass === pass);
+    if (!encontrado) {
+      msg.textContent = 'Usuario o contraseña incorrectos.';
+      msg.className = 'msg error';
+      return;
+    }
+
+    usuarioActual = encontrado.user;
+    msg.textContent = '';
+    modalOverlay.classList.remove('active');
+    registrarVisitaPagina();
+    mostrarSesionIniciada();
+  });
+
+  function mostrarSesionIniciada() {
+    loginBtn.style.display = 'none';
+    userPanel.style.display = 'flex';
+    userNameSpan.textContent = `Hola, ${usuarioActual}`;
+    actualizarTabsDeSesion(true);
+    actualizarMiInformacion();
+    const miInfoIndex = obtenerIndiceMiInfo();
+    if (miInfoIndex >= 0) {
+      activarTab(miInfoIndex);
+    }
+  }
+
+  document.getElementById('saveProfileBtn').addEventListener('click', () => {
+    if (!usuarioActual) return;
+    const perfil = usuarios.find(u => u.user === usuarioActual);
+    if (!perfil) return;
+
+    const name = document.getElementById('profileName').value.trim();
+    const email = document.getElementById('profileEmail').value.trim();
+    const phone = document.getElementById('profilePhone').value.trim();
+    const profileMsg = document.getElementById('profileMsg');
+
+    if (!name || !email || !phone) {
+      profileMsg.textContent = 'Completa todos los campos del perfil.';
+      profileMsg.className = 'msg error';
+      return;
+    }
+
+    perfil.name = name;
+    perfil.email = email;
+    perfil.phone = phone;
+    guardarUsuarios();
+
+    profileMsg.textContent = 'Información guardada correctamente.';
+    profileMsg.className = 'msg success';
+    actualizarMiInformacion();
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    usuarioActual = null;
+    loginBtn.style.display = 'inline-block';
+    userPanel.style.display = 'none';
+    actualizarTabsDeSesion(false);
+    document.getElementById('loginUser').value = '';
+    document.getElementById('loginPass').value = '';
+  });
+</script>
+
+</body>
+</html>
