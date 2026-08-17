@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyectos | VLAW, sistemas verdes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="topbar" id="topBar">
+  <header>
+    <div class="brand">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú de navegación" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <h1>VLAW, sistemas verdes</h1>
+    </div>
+    <div id="authArea">
+      <button class="btn" id="loginBtn">Iniciar sesión</button>
+      <div id="userPanel">
+        <span id="userName" style="color:#2ecc71;"></span>
+        <button class="btn" id="logoutBtn">Salir</button>
+      </div>
+    </div>
+  </header>
+  <nav class="tabs" id="tabsNav">
+        <a href="index.html" class="nav-link" data-page="Inicio">Inicio</a>
+        <a href="sobre-nosotros.html" class="nav-link" data-page="Sobre Nosotros">Sobre Nosotros</a>
+        <a href="servicios.html" class="nav-link" data-page="Servicios">Servicios</a>
+        <a href="sistemas-riego.html" class="nav-link" data-page="Sistemas de Riego">Sistemas de Riego</a>
+        <a href="productos.html" class="nav-link" data-page="Productos">Productos</a>
+        <a href="proyectos.html" class="nav-link" data-page="Proyectos">Proyectos</a>
+        <a href="clientes.html" class="nav-link" data-page="Clientes">Clientes</a>
+        <a href="sostenibilidad.html" class="nav-link" data-page="Sostenibilidad">Sostenibilidad</a>
+        <a href="preguntas-frecuentes.html" class="nav-link" data-page="Preguntas Frecuentes">Preguntas Frecuentes</a>
+        <a href="mi-informacion.html" class="nav-link" data-page="Mi información">Mi información</a>
+        <a href="contacto.html" class="nav-link" data-page="Contacto">Contacto</a>
+  </nav>
+</div>
+<main id="contenido">
+  <div class="tab-content active">
+    <h2>Proyectos Destacados</h2>
+      <p>Hemos trabajado con productores, municipios y empresas que buscan reducir costos, mejorar la presentación de áreas verdes y proteger el recurso hídrico.</p>
+      <div class="rich-layout">
+        <div class="text-stack">
+          <p>En viñedos, huertos, viveros y parques urbanos hemos puesto en marcha sistemas de riego diseñados para la realidad local y el tipo de superficie. El trabajo va más allá de instalar tuberías: se analiza el patrón de consumo, se controla el tiempo y se ajustan parámetros para evitar pérdidas.</p>
+          <div class="section-quote">En la mayoría de nuestros proyectos, el ahorro en agua y energía se refleja en los primeros meses de operación.</div>
+        </div>
+        <div class="image-panel">
+          <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=900&q=80" alt="Proyecto de riego en terreno agrícola" />
+        </div>
+      </div>
+      <div class="card-grid" id="grid-proyectos"></div>
+  </div>
+</main>
+<footer><p>&copy; 2026 VLAW, sistemas verdes. Todos los derechos reservados.</p></footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="close-btn" id="closeModal">&times;</button>
+    <div id="loginForm">
+      <h2>Iniciar sesión</h2>
+      <input type="text" id="loginUser" placeholder="Usuario">
+      <input type="password" id="loginPass" placeholder="Contraseña">
+      <button class="btn" id="loginSubmit" style="width:100%;">Entrar</button>
+      <p class="msg" id="loginMsg"></p>
+      <p style="margin-top:1rem;">¿No tienes cuenta? <span class="switch-link" id="showRegister">Regístrate</span></p>
+    </div>
+    <div id="registerForm" style="display:none;">
+      <h2>Crear cuenta</h2>
+      <input type="text" id="regName" placeholder="Nombre completo">
+      <input type="email" id="regEmail" placeholder="Correo electrónico">
+      <input type="tel" id="regPhone" placeholder="Teléfono">
+      <input type="text" id="regCity" placeholder="Ciudad">
+      <input type="text" id="regCompany" placeholder="Empresa o proyecto">
+      <input type="text" id="regUser" placeholder="Usuario">
+      <input type="password" id="regPass" placeholder="Contraseña">
+      <button class="btn" id="registerSubmit" style="width:100%;">Registrarme</button>
+      <p class="msg" id="registerMsg"></p>
+      <p style="margin-top:1rem;">¿Ya tienes cuenta? <span class="switch-link" id="showLogin">Inicia sesión</span></p>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
